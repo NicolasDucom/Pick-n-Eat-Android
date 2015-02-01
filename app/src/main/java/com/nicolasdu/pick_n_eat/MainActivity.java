@@ -17,37 +17,26 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import javax.xml.datatype.Duration;
 
-public class MainActivity extends ActionBarActivity {
 
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private String provider;
-    float latitude = (float) 50.5167;
-    float longitude = (float) 3.1667;
+public class MainActivity extends ActionBarActivity implements LocationListener{
+
+    double latitude;
+    double longitude;
+    protected LocationManager locationManager;
+    protected LocationListener locationListener;
+    protected Context context;
+    String provider;
+    protected boolean gps_enabled,network_enabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocationManager locationManager;
-        String context = Context.LOCATION_SERVICE;
-        locationManager = (LocationManager)getSystemService(context);
-
-        Criteria crta = new Criteria();
-        crta.setAccuracy(Criteria.ACCURACY_FINE);
-        crta.setAltitudeRequired(false);
-        crta.setBearingRequired(false);
-        crta.setCostAllowed(true);
-        crta.setPowerRequirement(Criteria.POWER_LOW);
-        String provider = locationManager.getBestProvider(crta, true);
-
-        // String provider = LocationManager.GPS_PROVIDER;
-        Location location = locationManager.getLastKnownLocation(provider);
-        System.out.println(location.getLatitude()+"::"+location.getLongitude());
-
-        locationManager.requestLocationUpdates(provider, 2000, 10, locationListener);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     @Override
@@ -75,38 +64,14 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-  //      locationManager.removeUpdates(this);
     }
 
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        latitude = (int) (location.getLatitude());
-//        longitude = (int) (location.getLongitude());
-//        System.out.println("Location: "+latitude+":"+longitude);
-//    }
 
-//    @Override
-//    public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//    }
-
-//    @Override
-//    public void onProviderEnabled(String provider) {
-//        Toast.makeText(this, "Enabled new provider " + provider,
-//                Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onProviderDisabled(String provider) {
-//        Toast.makeText(this, "Disabled provider " + provider,
-//                Toast.LENGTH_SHORT).show();
-//    }
 
     public void yelpSearch(View view) {
         new AsyncTask<Void, Void, String>(){
@@ -128,5 +93,27 @@ public class MainActivity extends ActionBarActivity {
              }
         }.execute();
         System.out.println();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        System.out.println("Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Toast toast = Toast.makeText(context, "Status Changed", Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast toast = Toast.makeText(context, "Location enabled", Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast toast = Toast.makeText(context, "Location disabled", Toast.LENGTH_SHORT);
     }
 }
