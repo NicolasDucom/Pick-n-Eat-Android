@@ -3,12 +3,18 @@ package com.nicolasdu.pick_n_eat;
 /**
  * Created by Nicolas on 1/31/2015.
  */
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class YelpManager {
@@ -24,19 +30,54 @@ public class YelpManager {
         this.accessToken = new Token(this.token, this.tokenSecret);
     }
 
-    public String search(double latitude, double longitude) {
+    public JSONObject search(double latitude, double longitude) {
         OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 
         request.addQuerystringParameter("ll", latitude + "," + longitude);
         this.service.signRequest(this.accessToken, request);
         try {
             Response response = request.send();
-            return response.getBody();
+            return new JSONObject(response.getBody());
         }
         catch (Exception e){
             return null;
         }
+    }
 
+    public Restaurant getRandomRestaurant(JSONObject yelpResponse)
+    {
+        String name, address, phone, displayPhone;
+        float longitude, latitude;
+        java.net.URL rating = null, website = null;
+        try {
+           JSONArray jsonRestaurants = yelpResponse.getJSONArray("businesses");
+           int numResponse = jsonRestaurants.length();
+           System.out.println(numResponse);
+           JSONObject jsonRestaurant = jsonRestaurants.getJSONObject((int) (Math.random()*numResponse));
+           System.out.println(jsonRestaurant);
+           name = jsonRestaurant.get("name").toString();
+           address = jsonRestaurant.getJSONObject("location").get("display_address").toString();
+           phone = jsonRestaurant.get("phone").toString();
+           displayPhone = jsonRestaurant.get("display_phone").toString();
+            try {
+                website = new URL(jsonRestaurant.get("mobile_url").toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+           longitude = Float.parseFloat(jsonRestaurant.getJSONObject("location").getJSONObject("coordinate").get("longitude").toString());
+           latitude = Float.parseFloat(jsonRestaurant.getJSONObject("location").getJSONObject("coordinate").get("latitude").toString());
+            try {
+                rating = new URL(jsonRestaurant.get("rating_img_url").toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Restaurant restaurant = new Restaurant(name, address, website, longitude, latitude, rating, phone, displayPhone);
+            System.out.println(restaurant.toString());
+            return restaurant;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
