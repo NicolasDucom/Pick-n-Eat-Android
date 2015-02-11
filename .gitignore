@@ -24,3 +24,5 @@ proguard/
 
 # Log Files
 *.log
+app/src/main/res/values/strings.xml
+.idea/workspace.xml
