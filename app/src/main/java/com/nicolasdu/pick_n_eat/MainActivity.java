@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.xml.datatype.Duration;
 
@@ -35,7 +36,13 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+       locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+       // gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+      //  network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        //if (!gps_enabled || !network_enabled){
+          //  Intent myIntent = new Intent( android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS );
+            //context.startActivity(myIntent);
+       // }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
@@ -74,25 +81,29 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
 
 
     public void yelpSearch(View view) {
-        new AsyncTask<Void, Void, String>(){
-            String temp;
+        new AsyncTask<Void, Void, Restaurant>(){
+            JSONObject temp;
             @Override
-            protected String doInBackground(Void... params) {
+            protected Restaurant doInBackground(Void... params) {
                 YelpManager yelpManager = new YelpManager();
                 temp = yelpManager.search(latitude,longitude);
-                return temp;
+                return yelpManager.getRandomRestaurant(temp);
             }
 
             @Override
-            protected void onPostExecute(String result) {
+            protected void onPostExecute(Restaurant result) {
+
                 if(result == null){
                     System.out.println("No internet connection");
                 } else {
                     System.out.println(temp);
                 }
+                Intent intent  = new Intent(MainActivity.this, RestaurantActivity.class);
+                intent.putExtra("Restaurant", result);
+                startActivity(intent);
              }
         }.execute();
-        System.out.println();
+
     }
 
     @Override
