@@ -1,5 +1,6 @@
 package com.nicolasdu.pick_n_eat;
 //coucou
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -30,20 +31,23 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     protected Context context;
     String provider;
     protected boolean gps_enabled,network_enabled;
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+       locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (!gps_enabled)
+        {
+            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        }
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, this);
 
-       locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-       // gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-      //  network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        //if (!gps_enabled || !network_enabled){
-          //  Intent myIntent = new Intent( android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-            //context.startActivity(myIntent);
-       // }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+
     }
 
     @Override
@@ -84,12 +88,19 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     }
 
     public void yelpSearch(View view) {
+        System.out.println("nico: latitude:"+latitude+" longitude:"+longitude);
         new AsyncTask<Void, Void, Restaurant>(){
             JSONObject temp;
+            protected void onPreExecute() {
+                progress = new ProgressDialog(MainActivity.this);
+                progress.setMessage("Nous cherchons un restaurant...");
+                progress.show();
+            }
+
             @Override
             protected Restaurant doInBackground(Void... params) {
                 YelpManager yelpManager = new YelpManager();
-                temp = yelpManager.search(latitude,longitude);
+                temp = yelpManager.search(longitude,latitude);
                 return yelpManager.getRandomRestaurant(temp);
             }
 
@@ -98,12 +109,19 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
 
                 if(result == null){
                     System.out.println("No internet connection");
+                    if (progress.isShowing()) {
+                        progress.dismiss();
+                    }
                 } else {
                     System.out.println(temp);
+                    Intent intent  = new Intent(MainActivity.this, RestaurantActivity.class);
+                    intent.putExtra("Restaurant", result);
+                    if (progress.isShowing()) {
+                        progress.dismiss();
+                    }
+                    startActivity(intent);
                 }
-                Intent intent  = new Intent(MainActivity.this, RestaurantActivity.class);
-                intent.putExtra("Restaurant", result);
-                startActivity(intent);
+
              }
         }.execute();
 
