@@ -5,5 +5,11 @@
     <string name="hello_world">Bonjour !</string>
     <string name="action_settings">Réglages</string>
     <string name="title_activity_splash">Splash</string>
+    <string name="title_activity_restaurant">Nous vous proposons</string>
+    <string name="search_btn">Cherchez !</string>
+    <string name="restaurant_name">Texte large</string>
+    <string name="restaurant_address">adresse</string>
+    <string name="directions">Itinéraire</string>
+    <string name="call">Téléphoner</string>
 
 </resources>
