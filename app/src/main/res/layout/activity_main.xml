@@ -8,7 +8,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:text="Search!"
+        android:text="@string/search_btn"
         android:id="@+id/button"
         android:onClick="yelpSearch"
         android:layout_centerVertical="true"
