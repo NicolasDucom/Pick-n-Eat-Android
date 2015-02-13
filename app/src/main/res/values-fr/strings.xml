@@ -11,5 +11,6 @@
     <string name="restaurant_address">adresse</string>
     <string name="directions">Itinéraire</string>
     <string name="call">Téléphoner</string>
+    <string name="website">Site</string>
 
 </resources>

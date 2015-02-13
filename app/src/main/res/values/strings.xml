@@ -11,5 +11,6 @@
     <string name="restaurant_address">address</string>
     <string name="directions">Directions</string>
     <string name="call">Phone Call</string>
+    <string name="website">Website</string>
 
 </resources>
