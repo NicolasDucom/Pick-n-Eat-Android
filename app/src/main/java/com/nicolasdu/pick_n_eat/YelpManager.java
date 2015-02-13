@@ -34,8 +34,11 @@ public class YelpManager {
 
     public JSONObject search(double latitude, double longitude) {
         OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
+        double lat = 50.633100;
+        double lng = 3.051389;
+        request.addQuerystringParameter("ll", lat + "," + lng);
 
-        request.addQuerystringParameter("ll", latitude + "," + longitude);
+
         this.service.signRequest(this.accessToken, request);
         try {
             Response response = request.send();
