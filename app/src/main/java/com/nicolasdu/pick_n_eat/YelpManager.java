@@ -15,6 +15,8 @@ import org.scribe.oauth.OAuthService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class YelpManager {
@@ -46,7 +48,8 @@ public class YelpManager {
 
     public Restaurant getRandomRestaurant(JSONObject yelpResponse)
     {
-        String name, address, phone, displayPhone;
+        String name, phone, displayPhone;
+        ArrayList<String> address = new ArrayList<>();
         float longitude, latitude;
         java.net.URL rating = null, website = null;
         try {
@@ -56,7 +59,9 @@ public class YelpManager {
            JSONObject jsonRestaurant = jsonRestaurants.getJSONObject((int) (Math.random()*numResponse));
            System.out.println(jsonRestaurant);
            name = jsonRestaurant.get("name").toString();
-           address = jsonRestaurant.getJSONObject("location").get("display_address").toString();
+            for (int i = 0; i < jsonRestaurant.getJSONObject("location").getJSONArray("display_address").length(); i++) {
+                address.add(jsonRestaurant.getJSONObject("location").getJSONArray("display_address").get(i).toString());
+            }
            phone = jsonRestaurant.get("phone").toString();
            displayPhone = jsonRestaurant.get("display_phone").toString();
             try {

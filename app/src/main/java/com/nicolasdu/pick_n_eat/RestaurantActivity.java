@@ -21,14 +21,16 @@ Restaurant restaurant;
     }
 
     public void setViewContents(){
+        String displayAddress = "";
         TextView title = (TextView)findViewById(R.id.textView2);
         TextView address = (TextView)findViewById(R.id.textView);
         TextView phone = (TextView)findViewById(R.id.textView4);
-        TextView website = (TextView)findViewById(R.id.textView5);
         title.setText(restaurant.getTitle());
         phone.setText(restaurant.getDisplayPhone());
-        address.setText(restaurant.getAddress());
-        website.setText(restaurant.getWebsite().toString());
+        for (int i = 0; i < restaurant.getAddress().size(); i++) {
+            displayAddress += restaurant.getAddress().get(i)+ System.getProperty ("line.separator");
+        }
+        address.setText(displayAddress);
     }
 
     public void openMapDirections(View view){
@@ -41,6 +43,12 @@ Restaurant restaurant;
         Intent intent = new Intent(Intent.ACTION_DIAL);
         intent.setData(Uri.parse("tel:"+restaurant.getPhone()));
         startActivity(intent);
+    }
+
+    public void openWebsite(View view){
+        Intent i = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse(restaurant.getWebsite().toString()));
+        startActivity(i);
     }
 
     @Override

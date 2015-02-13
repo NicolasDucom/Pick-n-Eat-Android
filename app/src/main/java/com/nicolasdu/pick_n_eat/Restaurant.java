@@ -12,12 +12,12 @@ import java.util.ArrayList;
 public class Restaurant implements Serializable{
 
     private String Title;
-    private String Address;
+    private ArrayList<String> Address;
     private URL Website;
     private float Longitude;
     private float Latitude;
     private URL Rating;
-    private ArrayList<Review> Reviews = new ArrayList();
+    private ArrayList<Review> Reviews = new ArrayList<>();
     private String Phone;
     private String DisplayPhone;
 
@@ -25,7 +25,7 @@ public class Restaurant implements Serializable{
     }
 
 
-    public  Restaurant(String title, String address, URL website, float longitude, float latitude, URL rating, String phone, String displayPhone) {
+    public  Restaurant(String title, ArrayList<String> address, URL website, float longitude, float latitude, URL rating, String phone, String displayPhone) {
         Title = title;
         Address = address;
         Website = website;
@@ -44,11 +44,11 @@ public class Restaurant implements Serializable{
         Title = title;
     }
 
-    public String getAddress() {
+    public ArrayList<String> getAddress() {
         return Address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(ArrayList<String> address) {
         Address = address;
     }
 
